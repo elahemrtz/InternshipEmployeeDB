@@ -37,29 +37,53 @@ def show_employee_form():
 
 
     tk.Label(root, text="Position").grid(row=6, column=0)
-    entry_position = tk.Entry(root)
-    entry_position.grid(row=6, column=1)
+    ttk.Combobox(
+        state="readonly",
+        values=list(database.constants['emp_position'].values())
+    ).grid(row=6, column=1)
 
     tk.Label(root, text="Department").grid(row=7, column=0)
     entry_department = tk.Entry(root)
     entry_department.grid(row=7, column=1)
+    ttk.Combobox(
+        state="readonly",
+        values=list(database.constants['department'].values())
+    ).grid(row=7, column=1)
+    
 
-    tk.Label(root, text="Address").grid(row=8, column=0)
+    tk.Label(root, text="Edu Prog").grid(row=8, column=0)
+    entry_department = tk.Entry(root)
+    entry_department.grid(row=8, column=1)
+    ttk.Combobox(
+        state="readonly",
+        values=list(database.constants['edu_prog'].values())
+    ).grid(row=8, column=1)
+
+
+    tk.Label(root, text="Edu Level").grid(row=9, column=0)
+    entry_department = tk.Entry(root)
+    entry_department.grid(row=9, column=1)
+    ttk.Combobox(
+        state="readonly",
+        values=list(database.constants['edu_level'].values())
+    ).grid(row=9, column=1)
+
+    tk.Label(root, text="Address").grid(row=10, column=0)
     entry_address = tk.Entry(root)
-    entry_address.grid(row=8, column=1)
+    entry_address.grid(row=10, column=1)
 
-    tk.Label(root, text="Phone Number").grid(row=9, column=0)
+    tk.Label(root, text="Phone Number").grid(row=11, column=0)
     entry_phone = tk.Entry(root)
-    entry_phone.grid(row=9, column=1)
+    entry_phone.grid(row=11, column=1)
 
-    tk.Label(root, text="Email Address").grid(row=10, column=0)
+    tk.Label(root, text="Email Address").grid(row=12, column=0)
     entry_email = tk.Entry(root)
-    entry_email.grid(row=10, column=1)
+    entry_email.grid(row=12, column=1)
 
     tk.Button(root, text="Submit", command=lambda: submit_data(entry_fname.get(),
     entry_lname.get(), entry_ssid.get(), entry_dob.get(), entry_marital_status.get(),
     entry_gender.get(), entry_position.get(), entry_department.get(), entry_address.get(),
-    entry_phone.get(), entry_email.get())).grid(row=11, column=1)
+    entry_phone.get(), entry_email.get())).grid(row=14, column=1)
 
     root.mainloop()
 
