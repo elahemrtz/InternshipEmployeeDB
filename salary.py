@@ -34,7 +34,11 @@ class UserProfileApp:
 
 if __name__ == "__main__":
 
+#connect to database 
 
+#get list of employees 
+
+#call function to compute total
     
 
 
