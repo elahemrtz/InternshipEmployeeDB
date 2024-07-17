@@ -1,3 +1,6 @@
+
+from ast import main
+from logging import root
 import tkinter as tk
 from tkinter import messagebox
 import csv
@@ -44,10 +47,7 @@ def save_time(self, employee, action, time):
             writer.writerow([employee, action, time])
     except Exception as e:
         messagebox.showerror("Error", f"Could not save the time: {e}")
-
-if __name__ == "__main__":
-    root = tk.Tk()
-    app = TimesheetApp(root)
-    root.mainloop()
-
+         
+if __name__=="__main__": 
+    main() 
 
