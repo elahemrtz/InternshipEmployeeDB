@@ -1,6 +1,4 @@
 
-from ast import main
-from logging import root
 import tkinter as tk
 from tkinter import messagebox
 import csv
@@ -14,7 +12,8 @@ class TimesheetApp:
 
         self.employees = []
         self.fetch_employees()
-        self.selected_employee = tk.StringVar(value=self.employees[0]) if len(self.employees) > 0 else None
+        self.employees = [(2, 'lkmcl cmdslc'), (5, 'cdsdlkc dsmclds'), (7, ';lcdsmc ml,dcs;c')]
+        self.selected_employee = tk.IntVar(value=self.employees[0][0]) if len(self.employees) > 0 else None
 
         self.create_widgets()
         self.root.mainloop()
@@ -30,14 +29,19 @@ class TimesheetApp:
         else:
             tk.Label(self.root, text="Select Employee:").grid(row=0, column=0, padx=10, pady=10)
 
-            tk.OptionMenu(self.root, self.selected_employee, *self.employees)\
-                .grid(row=0, column=1, padx=10, pady=10)
+
+            for idx, (idx2, name) in enumerate(self.employees):
+                tk.Radiobutton(self.root, 
+                               text=name, 
+                               value=idx2, 
+                               variable=self.selected_employee)\
+                               .grid(row=idx+1, column=0, sticky='w', padx=10, pady=10)
 
             tk.Button(self.root, text="Clock In", command=self.clock_in)\
-                .grid(row=1, column=0, padx=10, pady=10)
+                .grid(row=len(self.employees)+2, column=0, padx=10, pady=10)
 
             tk.Button(self.root, text="Clock Out", command=self.clock_out)\
-                .grid(row=1, column=1, padx=10, pady=10)
+                .grid(row=len(self.employees)+2, column=1, padx=10, pady=10)
 
     def clock_in(self):
         employee = self.selected_employee.get()
