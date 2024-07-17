@@ -1,6 +1,6 @@
 import oracledb
 from oracledb.connection import Connection
-from typing import Dict
+from typing import Dict, Union
 
 connection: Connection
 constants: Dict[str, Dict[int, str]]
@@ -19,9 +19,9 @@ def connect_db():
     except oracledb.Error as error:
         print("Connection error:", error)
 
-def query(query_str: str):
+def query(query_str: str, parameters: Union[list, tuple, dict] = None):
     cur = connection.cursor()
-    return cur.execute(query_str)
+    return cur.execute(query_str, parameters)
 
 def initialize_constants():
     global constants

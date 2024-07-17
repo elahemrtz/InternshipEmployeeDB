@@ -1,7 +1,10 @@
+from datetime import date
 from logging import root
+import re
 import tkinter as tk
 from tkinter import ttk
 from tkinter import messagebox
+from typing import Optional
 
 import database
 from database import query
@@ -92,11 +95,37 @@ def show_employee_form():
 
     tk.Label(root, text="Employee Contract").grid(row=13, column=0)
     employee_type = tk.StringVar()
-    ttk.Combobox(
+
+    base_salary =  tk.Label(root, text="Base Salary"), tk.Entry(root)
+    min_weekly_hour = tk.Label(root, text="Minimum Weekly Hours"), tk.Entry(root)
+    hourly_wage = tk.Label(root, text="Hourly Wage"), tk.Entry(root)
+    def option_selected(_):
+        if employee_type.get() == 'Full-Time':
+            min_weekly_hour[0].grid_forget()
+            min_weekly_hour[1].grid_forget()
+            hourly_wage[0].grid_forget()
+            hourly_wage[1].grid_forget()
+
+            base_salary[0].grid(row=14, column=0)
+            base_salary[1].grid(row=14, column=1, sticky='we', pady=10)
+        else:
+            base_salary[0].grid_forget()
+            base_salary[1].grid_forget()
+
+            min_weekly_hour[0].grid(row=14, column=0)
+            min_weekly_hour[1].grid(row=14, column=1, sticky='we', pady=10)
+
+            hourly_wage[0].grid(row=15, column=0)
+            hourly_wage[1].grid(row=15, column=1, sticky='we', pady=10)
+
+
+    cbox = ttk.Combobox(
         state="readonly",
         values= ['Full-Time' , 'Part-Time'],
         textvariable=employee_type,
-    ).grid(row=13, column=1, sticky='we', pady=10)
+    )
+    cbox.grid(row=13, column=1, sticky='we', pady=10)
+    cbox.bind("<<ComboboxSelected>>", option_selected)
 
     tk.Button(root, 
               text="Submit", 
@@ -113,7 +142,7 @@ def show_employee_form():
                   phone.get(), 
                   email.get(),
                   employee_type.get(),
-                  )).grid(row=16, column=1)
+                  )).grid(row=17, column=1)
 
     root.mainloop()
 
@@ -135,11 +164,27 @@ def submit_data(fname, lname, ssid, dob, marital_status, gender, position, depar
         gender == '' or position == '' or department == '' or address == '' or phone == '' or \
         email == '' or employee_type == '':
         return messagebox.showerror('Error!', 'All Fields are required!')
+    
+    if len(list(query('select * from employee where ssid=$1', [ssid]))) > 0:
+        return messagebox.showerror('Error!', 'SSID should be unique!')
+    
+    if not re.compile('$[0-9]{10}^').match(phone):
+        return messagebox.showerror('Error!', 'Incorrect Phone number format!')
+    
+    if not re.compile('$[0-9]{10}^').match(phone):
+        return messagebox.showerror('Error!', 'Incorrect Phone number format!')
+    
+    if not re.compile('$.+@.+\\..+^').match(email):
+        return messagebox.showerror('Error!', 'Incorrect Email format!')
 
     marital_status = find_constant_key('marital_status', marital_status)
     gender = find_constant_key('gender', gender)
     position = find_constant_key('emp_position', position)
     department = find_constant_key('department', department)
+    try:
+        dob = date.strptime(dob, '%Y-%m-%d')
+    except:
+        return messagebox.showerror('Error!', 'Format of Date of Birth should be YYYY-MM-dd!')
 
     query(f'insert into employee (first_name, last_name, ssid, dob, marital_status, gender, position, department, address, phone_number, email_address, employee_type) values ' + 
           f'($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)',
