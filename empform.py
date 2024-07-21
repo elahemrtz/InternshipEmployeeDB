@@ -1,4 +1,4 @@
-from datetime import date
+from datetime import date, datetime
 from logging import root
 import re
 import tkinter as tk
@@ -7,7 +7,7 @@ from tkinter import messagebox
 from typing import Optional
 
 import database
-from database import query
+from database import query, select_query
 
 
 def show_employee_form():
@@ -142,11 +142,30 @@ def show_employee_form():
                   phone.get(), 
                   email.get(),
                   employee_type.get(),
+                  base_salary[1].get(),
+                  min_weekly_hour[1].get(),
+                  hourly_wage[1].get(),
                   )).grid(row=17, column=1)
 
     root.mainloop()
 
-def submit_data(fname, lname, ssid, dob, marital_status, gender, position, department, address, phone, email, employee_type):
+def submit_data(fname, 
+                lname, 
+                ssid, 
+                dob, 
+                marital_status, 
+                gender, 
+                position, 
+                department, 
+                address, 
+                phone, 
+                email, 
+                employee_type,
+                base_salary,
+                min_weekly_hour,
+                hourly_wage
+                ):
+    
     print(f"First Name: {fname}")
     print(f"Last Name: {lname}")
     print(f"SSID: {ssid}")
@@ -159,22 +178,26 @@ def submit_data(fname, lname, ssid, dob, marital_status, gender, position, depar
     print(f"Phone Number: {phone}")
     print(f"Email Address: {email}")
     print(f"Employee Type: {employee_type}")
+    print(f"Base Salary: {base_salary}")
+    print(f"Min Weekly Hour: {min_weekly_hour}")
+    print(f"Hourly Wage: {hourly_wage}")
 
     if fname == '' or lname == '' or ssid == '' or dob == '' or marital_status == '' or \
         gender == '' or position == '' or department == '' or address == '' or phone == '' or \
-        email == '' or employee_type == '':
+        email == '' or employee_type == '' or \
+        (employee_type == 'Full-Time' and base_salary == '' or employee_type == 'Part-Time' and min_weekly_hour + hourly_wage == ''):
         return messagebox.showerror('Error!', 'All Fields are required!')
     
-    if len(list(query('select * from employee where ssid=$1', [ssid]))) > 0:
+    if len(select_query(f'select * from employee where ssid=\'{ssid}\'')) > 0:
         return messagebox.showerror('Error!', 'SSID should be unique!')
     
-    if not re.compile('$[0-9]{10}^').match(phone):
+    if not re.compile(r'^[0-9]{10}$').match(ssid):
+        return messagebox.showerror('Error!', 'Incorrect SSID format!')
+    
+    if not re.compile(r'^[0-9]{11}$').match(phone):
         return messagebox.showerror('Error!', 'Incorrect Phone number format!')
     
-    if not re.compile('$[0-9]{10}^').match(phone):
-        return messagebox.showerror('Error!', 'Incorrect Phone number format!')
-    
-    if not re.compile('$.+@.+\\..+^').match(email):
+    if not re.compile('^.+@.+\\..+$').match(email):
         return messagebox.showerror('Error!', 'Incorrect Email format!')
 
     marital_status = find_constant_key('marital_status', marital_status)
@@ -182,13 +205,39 @@ def submit_data(fname, lname, ssid, dob, marital_status, gender, position, depar
     position = find_constant_key('emp_position', position)
     department = find_constant_key('department', department)
     try:
-        dob = date.strptime(dob, '%Y-%m-%d')
+        datetime.strptime(dob, '%Y-%m-%d')
     except:
         return messagebox.showerror('Error!', 'Format of Date of Birth should be YYYY-MM-dd!')
+    
+    if employee_type == 'Full-Time':
+        try:
+            base_salary = int(base_salary)
+        except:
+            return messagebox.showerror('Error!', 'Base Salary should be an integer!')
+    else:
+        try:
+            min_weekly_hour = int(min_weekly_hour)
+        except:
+            return messagebox.showerror('Error!', 'Min Weekly Hours should be an integer!')
+        try:
+            hourly_wage = int(hourly_wage)
+        except:
+            return messagebox.showerror('Error!', 'Hourly Wage should be an integer!')
+    
+    keys_ = 'first_name, last_name, ssid, dob, marital_status, gender, position, department, address, phone_number, email_address, employee_type'
+    values_ = [fname, lname, ssid, f'to_date(\'{dob}\', \'YYYY-MM-DD\')', marital_status, gender, position, department, address, phone, email, employee_type]
+    if employee_type == 'Full-Time': 
+        keys_ += ', base_salary, daily_start_time, daily_end_time'
+        values_ += [base_salary, 9, 17]
+    else: 
+        keys_ += ', min_hour_per_week, salary_per_hour'
+        values_ += [min_weekly_hour, hourly_wage]
 
-    query(f'insert into employee (first_name, last_name, ssid, dob, marital_status, gender, position, department, address, phone_number, email_address, employee_type) values ' + 
-          f'($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12)',
-          [fname, lname, ssid, dob, marital_status, gender, position, department, address, phone, email, employee_type])
-
+    for i in range(len(values_)):
+        if isinstance(values_[i], str) and 'to_date' not in values_[i]: 
+            values_[i] = f'\'{values_[i]}\''
+        else:
+            values_[i] = f'{values_[i]}'
+    query(f'insert into employee ({keys_}) values ({', '.join(values_)})')
 def find_constant_key(table_name, value):
     return [k for k, v in database.constants[table_name].items() if v == value][0]

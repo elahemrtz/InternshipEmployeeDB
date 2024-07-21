@@ -3,7 +3,7 @@ import tkinter as tk
 from tkinter import messagebox
 import csv
 from datetime import datetime
-from database import query
+from database import query, select_query
 
 class TimesheetApp:
     def __init__(self):
@@ -20,7 +20,7 @@ class TimesheetApp:
 
     def fetch_employees(self):
         self.employees = []
-        for emp in query('select id, first_name, last_name from employee'):
+        for emp in select_query('select id, first_name, last_name from employee'):
             self.employees.append((emp[0], emp[1] + ' ' + emp[2]))
 
     def create_widgets(self):

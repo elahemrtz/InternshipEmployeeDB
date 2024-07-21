@@ -1,7 +1,7 @@
 import tkinter as tk
 from tkinter import *
 from datetime import datetime
-from database import query
+from database import query, select_query
 import database
 
 class UserProfileApp:
@@ -35,7 +35,7 @@ class UserProfileApp:
 
     def fetch_employees(self):
         self.employees = []
-        for emp in query('select id, first_name, last_name from employee'):
+        for emp in select_query('select id, first_name, last_name from employee'):
             self.employees.append((emp[0], emp[1] + ' ' + emp[2]))
 
     
@@ -74,22 +74,12 @@ class UserProfileApp:
         #calculate data for selected employee
         #emp sal info = [base , delay , overtime]
         id = self.selected_employee.get()
-        query('select BASE_AMOUNT from employee where id = {id}')
-        query('select OVERTIME_AMOUNT , DELAYS_AMOUNT from salary where EMPLOYEE = {id}')
+        select_query('select BASE_AMOUNT from employee where id = {id}')
+        select_query('select OVERTIME_AMOUNT , DELAYS_AMOUNT from salary where EMPLOYEE = {id}')
 
 
 
 if __name__ == "__main__":
-
-#connect to database 
-    database.connect_db()
-#get list of employees 
-    query('select * from gender')
-    print(type(query))
-#call function to compute total
-    
-
-
     root = tk.Tk()
     app = UserProfileApp()
     app._init_(root=root)

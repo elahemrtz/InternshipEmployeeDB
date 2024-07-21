@@ -19,9 +19,19 @@ def connect_db():
     except oracledb.Error as error:
         print("Connection error:", error)
 
-def query(query_str: str, parameters: Union[list, tuple, dict] = None):
+def query(query_str: str):
     cur = connection.cursor()
-    return cur.execute(query_str, parameters)
+    try:
+        cur.execute(query_str)
+    finally:
+        connection.commit()
+
+def select_query(query_str: str):
+    try:
+        with connection.cursor() as cur:
+            return list(cur.execute(query_str))
+    finally:
+        connection.commit()
 
 def initialize_constants():
     global constants
@@ -32,5 +42,5 @@ def initialize_constants():
                  'edu_level': {},
                  'edu_prog': {}}
     for table in constants.keys():
-        for elem in query(f'select * from {table}'):
+        for elem in select_query(f'select * from {table}'):
             constants[table][elem[0]] = elem[1]
