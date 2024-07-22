@@ -133,43 +133,12 @@ class EmployeeForm:
 
         tk.Button(self.root, 
                 text="Submit", 
-                command=lambda: self.submit_data(
-                    fname.get(),
-                    lname.get(), 
-                    ssid.get(), 
-                    dob.get(), 
-                    marital_status.get(),
-                    gender.get(), 
-                    emp_position.get(), 
-                    department.get(), 
-                    address.get(),
-                    phone.get(), 
-                    email.get(),
-                    employee_type.get(),
-                    base_salary[1].get(),
-                    min_weekly_hour[1].get(),
-                    hourly_wage[1].get(),
-                    )).grid(row=17, column=1)
+                command=lambda: self.submit_data(fname.get(), lname.get(),  ssid.get(),  dob.get(),  marital_status.get(), gender.get(),  emp_position.get(),  department.get(),  address.get(), phone.get(),  email.get(), employee_type.get(), base_salary[1].get(), min_weekly_hour[1].get(), hourly_wage[1].get())
+                ).grid(row=17, column=1)
 
         self.root.mainloop()
 
-    def submit_data(self,
-                    fname, 
-                    lname, 
-                    ssid, 
-                    dob, 
-                    marital_status, 
-                    gender, 
-                    position, 
-                    department, 
-                    address, 
-                    phone, 
-                    email, 
-                    employee_type,
-                    base_salary,
-                    min_weekly_hour,
-                    hourly_wage
-                    ):
+    def submit_data(self, fname, lname, ssid, dob, marital_status, gender, position, department, address, phone, email, employee_type,base_salary,min_weekly_hour,hourly_wage):
         
         if fname == '' or lname == '' or ssid == '' or dob == '' or marital_status == '' or \
             gender == '' or position == '' or department == '' or address == '' or phone == '' or \

@@ -85,15 +85,14 @@ class UserProfileApp:
                  else f'Hourly Wage: {user[18]}')\
             .pack(padx=10, pady=5)
         
-        tk.Button(text='View Timesheet', command=lambda:self.go_to_timesheet(user_id))
+        tk.Button(profile_window, text='View Timesheet', command=lambda:self.open_timesheet(user))\
+            .pack(padx=10, pady=10)
         
     def calculate_salary(self):
         #calculate data for selected employee
-        #emp sal info = [base , delay , overtime]
         id = self.selected_employee.get()
         select_query('select BASE_AMOUNT from employee where id = {id}')
         select_query('select OVERTIME_AMOUNT , DELAYS_AMOUNT from salary where EMPLOYEE = {id}')
 
     def open_timesheet(self, user_id):
-        timesheet.TimesheetApp()
-
+        timesheet.TimesheetApp(tk.Toplevel(self.root), user_id, as_manager=True)

@@ -7,6 +7,6 @@ import salary
 database.connect_db()
 database.initialize_constants()
 
-# timesheet.TimesheetApp()
-# empform.EmployeeForm()
+#timesheet.TimesheetApp()
+#empform.EmployeeForm()
 salary.UserProfileApp()

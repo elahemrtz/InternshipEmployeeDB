@@ -27,6 +27,7 @@ def query(query_str: str):
         connection.commit()
 
 def select_query(query_str: str):
+    print(query_str)
     try:
         with connection.cursor() as cur:
             return list(cur.execute(query_str))
@@ -40,7 +41,8 @@ def initialize_constants():
                  'emp_position': {},
                  'department': {},
                  'edu_level': {},
-                 'edu_prog': {}}
+                 'edu_prog': {},
+                 'timesheet_type': {}}
     for table in constants.keys():
         for elem in select_query(f'select * from {table}'):
             constants[table][elem[0]] = elem[1]
