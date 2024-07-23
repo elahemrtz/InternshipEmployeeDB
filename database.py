@@ -47,3 +47,6 @@ def initialize_constants():
     for table in constants.keys():
         for elem in select_query(f'select * from {table}'):
             constants[table][elem[0]] = elem[1]
+
+def find_constant_key(table_name, value):
+    return [k for k, v in constants[table_name].items() if v == value][0]
