@@ -1,12 +1,12 @@
 import database
-import empform
-import timesheet
-import salary
-
+from nav import *
+import tkinter as tk
 
 database.connect_db()
 database.initialize_constants()
 
-#timesheet.TimesheetApp()
-#empform.EmployeeForm()
-salary.UserProfileApp()
+root = tk.Tk()
+
+NavApp(root)
+
+root.mainloop()
