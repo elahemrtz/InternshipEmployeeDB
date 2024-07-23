@@ -2,6 +2,8 @@
 import tkinter as tk
 from datetime import datetime
 from tkinter import ttk
+from tkinter import messagebox
+from typing import Any, Dict, List
 from database import query, select_query
 import database
 import calendar
@@ -45,7 +47,7 @@ class TimesheetApp:
             ).grid(row=1, column=4, padx=10, pady=5)
 
             tk.Button(self.root,
-                      text='View Month Timesheet', 
+                      text='Refresh Timesheet', 
                       command=lambda: self.display_timesheet(year_var.get(), month_var.get())
             ).grid(row=1, column=5, padx=10, pady=10)
         else:
@@ -58,7 +60,8 @@ class TimesheetApp:
             v.grid_forget()
         self.timesheet_views = []
 
-        for i, (event_type, event_time, verified) in enumerate(self.fetch_timesheet(year, month)):
+        timesheet = self.fetch_timesheet(year, month)
+        for i, (idx, event_type, event_time, verified) in enumerate(timesheet):
             event_time = event_time.strftime('%Y-%m-%d %H:%M:%S')
 
             if i == 0:
@@ -71,17 +74,45 @@ class TimesheetApp:
                 self.timesheet_views += [tk.Label(self.root, text='Time')]
                 self.timesheet_views[-1].grid(row=2, column=3, padx=10, pady=10)
 
-            self.timesheet_views += [tk.Checkbutton(self.root, variable=tk.BooleanVar(value=verified == 1))]
+                self.timesheet_views += [tk.Label(self.root, text='Deleted')]
+                self.timesheet_views[-1].grid(row=2, column=4, padx=10, pady=10)
+
+            self.timesheet_views += [tk.Checkbutton(self.root, 
+                                                    variable=tk.IntVar(self.root, name=f'{idx}_verified', value=verified))]
+            if verified: self.timesheet_views[-1].select()
+            else: self.timesheet_views[-1].deselect()
             self.timesheet_views[-1].grid(row=3+i, column=1, padx=10, pady=10)
 
-            self.timesheet_views += [tk.Label(self.root, text=event_type)]
+            self.timesheet_views += [ttk.Combobox(self.root, 
+                                                 state="readonly",
+                                                 values=['Enter', 'Exit'],
+                                                 textvariable=tk.StringVar(self.root,
+                                                                           name=f'{idx}_type',
+                                                                           value=event_type))]
+            self.timesheet_views[-1].current(['Enter', 'Exit'].index(event_type))
             self.timesheet_views[-1].grid(row=3+i, column=2, padx=10, pady=10)
 
-            self.timesheet_views += [tk.Label(self.root, text=event_time)]
+            self.timesheet_views += [tk.Entry(self.root, 
+                                              textvariable=tk.StringVar(self.root,
+                                                                        name=f'{idx}_time',
+                                                                        value=event_time))]
             self.timesheet_views[-1].grid(row=3+i, column=3, padx=10, pady=10)
 
+            self.timesheet_views += [tk.Checkbutton(self.root, 
+                                                    variable=tk.IntVar(self.root, name=f'{idx}_deleted', value=0))]
+            self.timesheet_views[-1].grid(row=3+i, column=4, padx=10, pady=10)
+
+        if len(timesheet):
+            self.timesheet_views += [tk.Button(self.root, text='Save Changes', command=lambda timesheet=timesheet: self.save_changes(timesheet))]
+            self.timesheet_views[-1].grid(row=3+len(timesheet), column=5, padx=10, pady=10)
+
     def fetch_timesheet(self, year, month):
-        return select_query(f'select tt.name, t.event_time, t.verified from timesheet t left join timesheet_type tt on t.event_type=tt.id where t.employee={self.employee[0]} and extract(year from t.event_time)={year} and extract(month from t.event_time)={month}')
+        return select_query('select t.id, tt.name, t.event_time, t.verified ' + 
+                            'from timesheet t left join timesheet_type tt on t.event_type=tt.id ' + 
+                            f'where t.employee={self.employee[0]} and ' + 
+                            f'extract(year from t.event_time)={year} ' + 
+                            f'and extract(month from t.event_time)={month} ' + 
+                            'order by t.event_time')
 
     def enter(self):
         self.save_time(self.employee, 'Enter')
@@ -93,7 +124,38 @@ class TimesheetApp:
         action = self.find_constant_key('timesheet_type', action)
         time = datetime.now().strftime('%Y-%m-$d %H:%M:%S.%Z')
         query(f"insert into timesheet (event_type, event_time, employee) values " +
-              f"({action}, to_timestamp('{time}', 'YYYY-MM-DD HH:MI:SS.FF'), {employee[0]})")    
+              f"({action}, to_timestamp('{time}', 'YYYY-MM-DD HH:MI:SS.FF'), {employee[0]})")
+    
+    def save_changes(self, timesheet):
+        for idx, oevent_type, oevent_time, overified in timesheet:
+            try:
+                deleted = self.root.getvar(f'{idx}_deleted')
+            except:
+                deleted = 0
+            try:
+                verified = self.root.getvar(f'{idx}_verified')
+            except:
+                verified = overified
+            try:
+                event_type = self.root.getvar(f'{idx}_type')
+            except:
+                event_type = oevent_type
+            try:
+                event_time = self.root.getvar(f'{idx}_time')
+            except:
+                event_time = oevent_time.strftime('%Y-%m-%d %H:%M:%S')
 
+            if deleted == 1:
+                query(f'delete from timesheet where id={idx}')
+                continue
+            try: 
+                datetime.strptime(event_time, '%Y-%m-%d %H:%M:%S')
+            except:
+                print(event_time)
+                messagebox.showerror('Error!', 'Invalid timestamp format')
+                break
+
+            query(f"update timesheet set verified={verified}, event_type={1 if event_type == 'Enter' else 2}, event_time=to_timestamp('{event_time}', 'YYYY-MM-DD HH:MI:SS.FF') where id={idx}")
+    
     def find_constant_key(self, table_name, value):
         return [k for k, v in database.constants[table_name].items() if v == value][0]

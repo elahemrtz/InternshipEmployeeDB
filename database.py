@@ -20,6 +20,7 @@ def connect_db():
         print("Connection error:", error)
 
 def query(query_str: str):
+    print(query_str)
     cur = connection.cursor()
     try:
         cur.execute(query_str)
