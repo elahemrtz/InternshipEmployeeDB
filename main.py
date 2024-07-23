@@ -1,16 +1,12 @@
 import database
-import empform
-import timesheet
-import salary
-import employee_select
+from nav import *
 import tkinter as tk
-
 
 database.connect_db()
 database.initialize_constants()
 
-employee_select.EmployeeSelectApp(
-    onselect=lambda user_id, user_name, user, root: timesheet.TimesheetCreateApp(tk.Toplevel(root), user)
-    )
-# empform.EmployeeForm()
-# salary.UserProfileApp()
+root = tk.Tk()
+
+NavApp(root)
+
+root.mainloop()

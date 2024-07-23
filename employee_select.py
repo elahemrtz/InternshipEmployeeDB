@@ -3,12 +3,11 @@ import tkinter as tk
 from database import select_query
 
 class EmployeeSelectApp:
-    def __init__(self, root=None, onselect=None):
-        self.root = root or tk.Tk()
+    def __init__(self, root, onselect=None):
+        self.root = root
         self.onselect = onselect
         self.fetch_employees()
         self.create_widget()
-        self.root.mainloop()
 
     def create_widget(self):
         if len(self.employees) == 0:
@@ -19,10 +18,7 @@ class EmployeeSelectApp:
             for user_id, user_name, user in self.employees:
                 tk.Button(self.root,
                           text=f'{user_name} ({user_id})', 
-                          command=lambda user_id=user_id, 
-                                         user_name=user_name, 
-                                         user=user, 
-                                         root=self.root: self.onselect(user_id, user_name, user, root))\
+                          command=lambda user=user: self.onselect(user))\
                     .pack(padx=10, pady=10)
             
     def fetch_employees(self):

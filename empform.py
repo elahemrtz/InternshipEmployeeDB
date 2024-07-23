@@ -6,11 +6,11 @@ from tkinter import messagebox
 from typing import Optional
 
 import database
-from database import query, select_query
+from database import find_constant_key, query, select_query
 
 class EmployeeForm:
-    def __init__(self):
-        self.root=tk.Tk()
+    def __init__(self, root):
+        self.root = root
         self.root.title("Employee Form")
 
         self.create_widget()
@@ -158,10 +158,10 @@ class EmployeeForm:
         if not re.compile('^.+@.+\\..+$').match(email):
             return messagebox.showerror('Error!', 'Incorrect Email format!')
 
-        marital_status = self.find_constant_key('marital_status', marital_status)
-        gender = self.find_constant_key('gender', gender)
-        position = self.find_constant_key('emp_position', position)
-        department = self.find_constant_key('department', department)
+        marital_status = find_constant_key('marital_status', marital_status)
+        gender = find_constant_key('gender', gender)
+        position = find_constant_key('emp_position', position)
+        department = find_constant_key('department', department)
         try:
             datetime.strptime(dob, '%Y-%m-%d')
         except:
@@ -197,5 +197,3 @@ class EmployeeForm:
             else:
                 values_[i] = f'{values_[i]}'
         query(f'insert into employee ({keys_}) values ({', '.join(values_)})')
-    def find_constant_key(self, table_name, value):
-        return [k for k, v in database.constants[table_name].items() if v == value][0]

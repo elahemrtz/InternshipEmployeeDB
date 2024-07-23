@@ -11,7 +11,7 @@ import calendar
 class TimesheetViewApp:
     def __init__(self, root, employee):
         self.root = root or tk.Tk()
-        self.root.title(f"{employee[7]} {employee[9]}\'s Timesheet")
+        self.root.title(f"{employee[7]} {employee[8]}\'s Timesheet")
 
         self.employee = employee
         self.timesheet_views = []
