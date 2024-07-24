@@ -3,10 +3,10 @@ from tkinter import messagebox
 
 
 
-TIMEOFF_REQUESTS = [
-    {"emp_id": "123", "name": "John Doe", "type": "Daily", "date": "2024-07-28", "start_date": "", "end_date": "", "start_time": "", "end_time": ""},
-    {"emp_id": "456", "name": "Jane Smith", "type": "Hourly", "date": "", "start_date": "2024-07-26", "end_date": "2024-07-26", "start_time": "09:00", "end_time": "13:00"},
-    {"emp_id": "789", "name": "Alice Johnson", "type": "Daily", "date": "2024-07-29", "start_date": "", "end_date": "", "start_time": "", "end_time": ""}
+TIMEOFF_REQUESTS = 
+    {"emp_id": "123", "name": "John Doe", "type": "Daily", "date": "2024-07-28", "start_date": "2024-07-28", "end_date": "2024-07-29", "start_time": "", "end_time": ""},
+    {"emp_id": "456", "name": "Jane Smith", "type": "Hourly", "date": "2024-07-09", "start_date": "2024-07-26", "end_date": "2024-07-26", "start_time": "09:00", "end_time": "13:00"},
+    {"emp_id": "789", "name": "Alice Johnson", "type": "Daily", "date": "2024-07-29", "start_date": "2024-07-28", "end_date": "2024-07-29", "start_time": "", "end_time": ""}
 ]
 
 class TimeoffVerification(tk.Tk):
@@ -29,6 +29,7 @@ class TimeoffVerification(tk.Tk):
 
             view_button = tk.Button(frame, text="View Details", command=lambda r=req: self.view_details(r))
             view_button.pack(side=tk.RIGHT, padx=10)
+            
 
     def view_details(self, request):
         details_window = tk.Toplevel(self)
@@ -41,9 +42,11 @@ class TimeoffVerification(tk.Tk):
 
         if request['type'] == "Daily":
             tk.Label(details_window, text=f"Date: {request['date']}").pack(pady=10)
-        else:
             tk.Label(details_window, text=f"Start Date: {request['start_date']}").pack(pady=10)
             tk.Label(details_window, text=f"End Date: {request['end_date']}").pack(pady=10)
+        else:
+            tk.Label(details_window, text=f"Date: {request['date']}").pack(pady=10)
+    
             tk.Label(details_window, text=f"Start Time: {request['start_time']}").pack(pady=10)
             tk.Label(details_window, text=f"End Time: {request['end_time']}").pack(pady=10)
 
