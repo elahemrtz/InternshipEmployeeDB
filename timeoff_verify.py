@@ -11,4 +11,4 @@ class VerifyLeave :
         self.create_widgets()
 
     def create_widgets(self):
-        
+        pass

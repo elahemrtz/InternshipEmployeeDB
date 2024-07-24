@@ -3,6 +3,7 @@ from empform import *
 from timesheet import *
 from employee_select import *
 from timeoff_request import *
+from timeoff_verify import *
 
 class NavApp:
     def __init__(self, root) -> None:
@@ -19,6 +20,8 @@ class NavApp:
             .pack(padx=10, pady=10)
         tk.Button(self.root, text='Timeoff Request Form', command=self.timeoff_request_nav)\
             .pack(padx=10, pady=10)
+        tk.Button(self.root, text='Timeoff Verify Form', command=self.timeoff_verify_nav)\
+            .pack(padx=10, pady=10)
     
     def employee_form_nav(self):
         EmployeeForm(tk.Toplevel(self.root))
@@ -33,3 +36,6 @@ class NavApp:
 
     def timeoff_request_nav(self):
         LeaveApplication(tk.Toplevel(self.root))
+
+    def timeoff_verify_nav(self):
+        VerifyLeave(tk.Toplevel(self.root))
