@@ -3,7 +3,7 @@ from tkinter import messagebox
 
 
 
-TIMEOFF_REQUESTS = 
+TIMEOFF_REQUESTS = [
     {"emp_id": "123", "name": "John Doe", "type": "Daily", "date": "2024-07-28", "start_date": "2024-07-28", "end_date": "2024-07-29", "start_time": "", "end_time": ""},
     {"emp_id": "456", "name": "Jane Smith", "type": "Hourly", "date": "2024-07-09", "start_date": "2024-07-26", "end_date": "2024-07-26", "start_time": "09:00", "end_time": "13:00"},
     {"emp_id": "789", "name": "Alice Johnson", "type": "Daily", "date": "2024-07-29", "start_date": "2024-07-28", "end_date": "2024-07-29", "start_time": "", "end_time": ""}
