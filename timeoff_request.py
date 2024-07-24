@@ -93,18 +93,21 @@ class LeaveApplication:
 
         if leave_type == "Daily":
             date = self.date_entry.get()
+        else : 
+            date = None
 
         if not date:
             messagebox.showerror("Error", "Please enter the leave date.")
             return
 
-            try:
+        try:
                 date = datetime.strptime(date, "%Y-%m-%d")
-            except ValueError:
+        except ValueError:
                 messagebox.showerror("Error", "Date should be in YYYY-MM-DD format.")
+                messagebox.showinfo("Success", "Your daily leave request has been submitted.")
                 return
 
-                messagebox.showinfo("Success", "Your daily leave request has been submitted.")
+                
         else:
             start_date = self.start_date_entry.get()
             end_date = self.end_date_entry.get()
@@ -115,12 +118,12 @@ class LeaveApplication:
             messagebox.showerror("Error", "Please enter the start and end dates and times.")
             return
 
-            try:
+        try:
                 start_date = datetime.strptime(start_date, "%Y-%m-%d")
                 end_date = datetime.strptime(end_date, "%Y-%m-%d")
                 start_time = datetime.strptime(start_time, "%H:%M")
                 end_time = datetime.strptime(end_time, "%H:%M")
-            except ValueError:
+        except ValueError:
                 messagebox.showerror("Error", "Dates should be in YYYY-MM-DD format and times should be in HH:MM format.")
                 return
 
