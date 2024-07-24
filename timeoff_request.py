@@ -2,20 +2,19 @@ import tkinter as tk
 from tkinter import messagebox
 from datetime import datetime
 
-# Sample database of employees
-EMPLOYEE_DB = {
-"123": "John Doe",
-"456": "Jane Smith",
-"789": "Alice Johnson"
-}
+from database import select_query
 
 class LeaveApplication:
     def __init__(self,root):
         self.root=root        
         self.root.title("Leave Request Form")
-        
-
+        self.fetch_employees()
         self.create_widgets()
+    
+    def fetch_employees(self):
+        self.emp_names = {}
+        for emp in select_query('select * from employee_v1'):
+            self.emp_names[f'{emp[0]}'] = emp[7] + ' ' + emp[8]
 
     def create_widgets(self):
         tk.Label(self.root, text="Employee ID:").grid(row=0, column=0, padx=10, pady=10)
@@ -78,8 +77,8 @@ class LeaveApplication:
 
     def search_employee(self):
         emp_id = self.emp_id_entry.get()
-        if emp_id in EMPLOYEE_DB:
-            self.emp_name_label.config(text=f"Employee Name: {EMPLOYEE_DB[emp_id]}")
+        if emp_id in self.emp_names:
+            self.emp_name_label.config(text=f"Employee Name: {self.emp_names[emp_id]}")
         else:
             self.emp_name_label.config(text="Employee not found")
     
