@@ -20,8 +20,11 @@ class EmployeeSelectApp:
         else:
             statuses: Dict[int, tk.Label] = {}
             def refresh():
-                for user_id, percenteage, rem_count in self.get_overall_timesheet_status():                    
+                all_ones = True
+                for user_id, percenteage, rem_count in self.get_overall_timesheet_status():
+                    if rem_count > 0: all_ones = False
                     statuses[user_id]['text'] = f'{percenteage * 100:.2f}% Verified ({rem_count} Remaining)'
+                if all_ones: calculate_btn['state'] = 'normal'
 
             if self.for_salary:
                 now = datetime.now()
@@ -58,7 +61,13 @@ class EmployeeSelectApp:
                     statuses[user_id] = tk.Label(self.root, text='100% Verified (0 Remaining)')
                     statuses[user_id].grid(row=3+i, column=3, columnspan=2, padx=10, pady=10)
             
-            if self.for_salary: refresh()
+            if self.for_salary:
+                refresh()
+                calculate_btn = tk.Button(self.root, 
+                                          text='Calculate and create paychecks', 
+                                          command=self.calculate_paychecks,
+                                          state='disabled')
+                calculate_btn.grid(row=3+len(self.employees), column=5, padx=10, pady=10)
 
     def get_overall_timesheet_status(self):
         year = self.year_var.get()
@@ -68,6 +77,9 @@ class EmployeeSelectApp:
                             f'from timesheet where extract(year from event_time)={year} and ' + 
                             f'extract(month from event_time)={month} ' + 
                             f'group by employee')
+    
+    def calculate_paychecks(self):
+        pass
             
     def onselect(self, employee):
         if self.for_salary:
