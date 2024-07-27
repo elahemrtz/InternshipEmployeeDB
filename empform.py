@@ -34,6 +34,7 @@ class EmployeeForm:
         tk.Label(self.root, text="Marital Status").grid(row=4, column=0)
         marital_status = tk.StringVar()
         ttk.Combobox(
+            self.root,
             state="readonly",
             values=list(database.constants['marital_status'].values()),
             textvariable=marital_status,
@@ -42,6 +43,7 @@ class EmployeeForm:
         tk.Label(self.root, text="Gender").grid(row=5, column=0)
         gender = tk.StringVar()
         ttk.Combobox(
+            self.root,
             state="readonly",
             values=list(database.constants['gender'].values()),
             textvariable=gender,
@@ -51,6 +53,7 @@ class EmployeeForm:
         tk.Label(self.root, text="Position").grid(row=6, column=0)
         emp_position = tk.StringVar()
         ttk.Combobox(
+            self.root,
             state="readonly",
             values=list(database.constants['emp_position'].values()),
             textvariable=emp_position,
@@ -59,6 +62,7 @@ class EmployeeForm:
         tk.Label(self.root, text="Department").grid(row=7, column=0)
         department = tk.StringVar()
         ttk.Combobox(
+            self.root,
             state="readonly",
             values=list(database.constants['department'].values()),
             textvariable=department
@@ -68,6 +72,7 @@ class EmployeeForm:
         tk.Label(self.root, text="Edu Prog").grid(row=8, column=0)
         edu_prog = tk.StringVar()
         ttk.Combobox(
+            self.root,
             state="readonly",
             values=list(database.constants['edu_prog'].values()),
             textvariable=edu_prog,
@@ -77,6 +82,7 @@ class EmployeeForm:
         tk.Label(self.root, text="Edu Level").grid(row=9, column=0)
         edu_level = tk.StringVar()
         ttk.Combobox(
+            self.root,
             state="readonly",
             values=list(database.constants['edu_level'].values()),
             textvariable=edu_level,
@@ -122,6 +128,7 @@ class EmployeeForm:
 
 
         cbox = ttk.Combobox(
+            self.root,
             state="readonly",
             values= ['Full-Time' , 'Part-Time'],
             textvariable=employee_type,
