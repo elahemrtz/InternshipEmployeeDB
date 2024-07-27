@@ -9,16 +9,17 @@ TIMEOFF_REQUESTS = [
     {"emp_id": "789", "name": "Alice Johnson", "type": "Daily", "date": "2024-07-29", "start_date": "2024-07-28", "end_date": "2024-07-29", "start_time": "", "end_time": ""}
 ]
 
-class TimeoffVerification(tk.Tk):
-    def __init__(self):
+class TimeoffVerification:
+    def __init__(self, root):
         super().__init__()
-        self.title("Timeoff Verification")
+        self.root = root
+        self.root.title("Timeoff Verification")
         self.create_widgets()
 
     def create_widgets(self):
-        tk.Label(self, text="Timeoff Requests", font=('Arial', 16)).pack(pady=10)
+        tk.Label(self.root, text="Timeoff Requests", font=('Arial', 16)).pack(pady=10)
 
-        self.requests_frame = tk.Frame(self)
+        self.requests_frame = tk.Frame(self.root)
         self.requests_frame.pack(fill=tk.BOTH, expand=True)
 
         for req in TIMEOFF_REQUESTS:
@@ -32,7 +33,7 @@ class TimeoffVerification(tk.Tk):
             
 
     def view_details(self, request):
-        details_window = tk.Toplevel(self)
+        details_window = tk.Toplevel(self.root)
         details_window.title("Timeoff Details")
         details_window.geometry("300x300")
 
