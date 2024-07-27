@@ -12,9 +12,7 @@ class EmployeeForm:
     def __init__(self, root):
         self.root = root
         self.root.title("Employee Form")
-
         self.create_widget()
-        self.root.mainloop()
 
     def create_widget(self):
         tk.Label(self.root, text="First Name").grid(row=0, column=0)

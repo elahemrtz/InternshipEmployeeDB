@@ -1,8 +1,8 @@
 import tkinter as tk
 from tkinter import messagebox
-from datetime import datetime
+from datetime import datetime, timedelta
 
-from database import select_query
+from database import query, select_query
 
 class LeaveApplication:
     def __init__(self,root):
@@ -84,54 +84,120 @@ class LeaveApplication:
     
     def submit_request(self):
         emp_id = self.emp_id_entry.get()
-        leave_type = self.leave_type.get()
+        leave_type =  self.leave_type.get()
 
         if not emp_id:
-            messagebox.showerror("Error", "Please enter the employee ID.")
+            messagebox.showerror('Error!', 'Employee ID is required!')
             return
-
-        if leave_type == "Daily":
+        
+        if leave_type == 'Hourly':
             date = self.date_entry.get()
-
-        if not date:
-            messagebox.showerror("Error", "Please enter the leave date.")
-            return
-
-            try:
-                date = datetime.strptime(date, "%Y-%m-%d")
-            except ValueError:
-                messagebox.showerror("Error", "Date should be in YYYY-MM-DD format.")
-                return
-
-                messagebox.showinfo("Success", "Your daily leave request has been submitted.")
-        else:
-            start_date = self.start_date_entry.get()
-            end_date = self.end_date_entry.get()
             start_time = self.start_time_entry.get()
             end_time = self.end_time_entry.get()
 
-        if not start_date or not end_date or not start_time or not end_time:
-            messagebox.showerror("Error", "Please enter the start and end dates and times.")
-            return
-
+            if not date:
+                messagebox.showerror('Error!', 'Leave date is required!')
+                return
+            if not start_time:
+                messagebox.showerror('Error!', 'Start time is required!')
+                return
+            if not end_time:
+                messagebox.showerror('Error!', 'End time is required!')
+                return
+            
             try:
-                start_date = datetime.strptime(start_date, "%Y-%m-%d")
-                end_date = datetime.strptime(end_date, "%Y-%m-%d")
-                start_time = datetime.strptime(start_time, "%H:%M")
-                end_time = datetime.strptime(end_time, "%H:%M")
-            except ValueError:
-                messagebox.showerror("Error", "Dates should be in YYYY-MM-DD format and times should be in HH:MM format.")
+                datetime.strptime(date, '%Y-%m-%d')
+            except:
+                messagebox.showerror('Error!', 'Leave date format must be YYYY-MM-DD')
+                return
+            try:
+                datetime.strptime(start_time, '%H:%M')
+            except:
+                messagebox.showerror('Error!', 'Start time format must be HH:MM')
+                return
+            try:
+                datetime.strptime(end_time, '%H:%M')
+            except:
+                messagebox.showerror('Error!', 'End time format must be HH:MM')
+                return
+            
+            start_time = datetime.strptime(f'{date} {start_time}:00', '%Y-%m-%d %H:%M:%S')
+            end_time = datetime.strptime(f'{date} {end_time}:00', '%Y-%m-%d %H:%M:%S')
+            hours = (end_time - start_time).seconds / 3600
+            total_hours = self.get_employee_taken_hours(emp_id, start_time) + hours
+            
+            if hours > 4:
+                messagebox.showerror('Error!', 'Hourly timeoff can be at most 4 hours')
+                return
+        
+            if total_hours > 20:
+                messagebox.showerror('Error!', 'The total timeoff is 20 hours per month')
+                return
+            
+            start_time = datetime.strftime(start_time, '%Y-%m-%d %H:%M:%S')
+            end_time = datetime.strftime(end_time, '%Y-%m-%d %H:%M:%S')
+        else:
+            start_date = self.start_date_entry.get()
+            end_date = self.end_date_entry.get()
+
+            if not start_date:
+                messagebox.showerror('Error!', 'Start Date is required!')
+                return
+            if not end_date:
+                messagebox.showerror('Error!', 'End Date is required!')
                 return
 
-        hours_diff = (end_time - start_time).seconds / 3600
-        days_diff = (end_date - start_date).days + 1
+            try:
+                start_date = datetime.strptime(start_date, '%Y-%m-%d')
+            except:
+                messagebox.showerror('Error!', 'Leave date format must be YYYY-MM-DD')
+                return
+            try:
+                end_date = datetime.strptime(end_date, '%Y-%m-%d') + timedelta(days=1)
+            except:
+                messagebox.showerror('Error!', 'Leave date format must be YYYY-MM-DD')
+                return
+            
+            if start_date.month == (end_date - timedelta(days=1)).month:
+                hours = 8 * (end_date - start_date).days
+                total_hours = self.get_employee_taken_hours(emp_id, start_date) + hours
 
-        if hours_diff > 4:
-            messagebox.showerror("Error", "You cannot take more than 4 hours of leave in a single day.")
-        elif days_diff > 2.5:
-            messagebox.showerror("Error", "You cannot take more than 2.5 days of leave.")
-        else:
-            messagebox.showinfo("Success", "Your hourly leave request has been submitted.")
+                if total_hours > 20:
+                    messagebox.showerror('Error!', 'The total timeoff is 20 hours per month')
+                    return
+            else:
+                month_start = start_date + timedelta(days=1)
+                while month_start.month == start_date.month: month_start += timedelta(days=1)
+
+                hours1 = 8 * (month_start - start_date).days
+                hours2 = 8 * (end_date - month_start).days
+                total_hours1 = self.get_employee_taken_hours(emp_id, start_date) + hours1
+                total_hours2 = self.get_employee_taken_hours(emp_id, end_date) + hours2
+
+                if total_hours1 > 20 or total_hours2 > 20:
+                    messagebox.showerror('Error!', 'The total timeoff is 20 hours per month')
+                    return
+
+                query(f'insert into timeoff (employee, type, start_time, end_time) values ' + 
+                        f'({emp_id}, \'{leave_type}\', ' + 
+                        f'to_date(\'{datetime.strftime(start_date, '%Y-%m-%d %H:%M:%S')}\', \'YYYY-MM-DD HH24:MI:SS\'), ' + 
+                        f'to_date(\'{datetime.strftime(month_start, '%Y-%m-%d %H:%M:%S')}\', \'YYYY-MM-DD HH24:MI:SS\'))')
+                start_date = month_start
+
+            start_time = datetime.strftime(start_date, '%Y-%m-%d %H:%M:%S')
+            end_time = datetime.strftime(end_date, '%Y-%m-%d %H:%M:%S')
+
+        query(f'insert into timeoff (employee, type, start_time, end_time) values ' + 
+                f'({emp_id}, \'{leave_type}\', ' + 
+                f'to_date(\'{start_time}\', \'YYYY-MM-DD HH24:MI:SS\'), ' + 
+                f'to_date(\'{end_time}\', \'YYYY-MM-DD HH24:MI:SS\'))')
+
+    def get_employee_taken_hours(self, employee, date): 
+        result = select_query(f'select sum(hours) from timeoff ' + 
+                              f'where employee={employee} and ' + 
+                              f'extract(month from start_time)={date.month} ' + 
+                              f'and extract(year from start_time)={date.year}')
+        return result[0][0] or 0
 
 if __name__ == "__main__":
     root=(tk.Tk())
