@@ -199,9 +199,6 @@ class LeaveApplication:
                               f'and extract(year from start_time)={date.year}')
         return result[0][0] or 0
 
-if __name__ == "__main__":
-    root=(tk.Tk())
-    LeaveApplication(root)
-    root.mainloop()
+
 
 

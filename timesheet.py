@@ -9,43 +9,26 @@ import database
 import calendar
 
 class TimesheetViewApp:
-    def __init__(self, root, employee):
+    def __init__(self, root, employee, year: int, month: int):
         self.root = root or tk.Tk()
         self.root.title(f"{employee[7]} {employee[8]}\'s Timesheet")
 
         self.employee = employee
+        self.year = year
+        self.month = month
         self.timesheet_views = []
 
         self.create_widgets()
         self.root.mainloop()
 
     def create_widgets(self):
-        now = datetime.now()
-        year_var = tk.IntVar(value=now.year)
-        tk.Label(self.root, text='Year').grid(row=1, column=1, padx=10, pady=5)
-        ttk.Combobox(
-            self.root,
-            state="readonly",
-            values= list(range(now.year-10, now.year+1))[::-1],
-            textvariable=year_var,
-        ).grid(row=1, column=2, padx=10, pady=5)
-
-        month_var = tk.StringVar(value=calendar.month_name[now.month])
-        tk.Label(self.root, text='Month').grid(row=1, column=3, padx=10, pady=5)
-        ttk.Combobox(
-            self.root,
-            state="readonly",
-            values= list(calendar.month_name)[1:],
-            textvariable=month_var,
-        ).grid(row=1, column=4, padx=10, pady=5)
-
         tk.Button(self.root,
                     text='Refresh Timesheet', 
-                    command=lambda: self.display_timesheet(year_var.get(), month_var.get())
+                    command=lambda: self.display_timesheet(self.year, self.month)
         ).grid(row=1, column=5, padx=10, pady=10)
+        self.display_timesheet(self.year, self.month)
 
     def display_timesheet(self, year: int, month: str):
-        month = [i for i, m in enumerate(calendar.month_name) if m == month][0]
         for v in self.timesheet_views:
             v.grid_forget()
         self.timesheet_views = []

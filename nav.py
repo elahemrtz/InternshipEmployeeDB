@@ -27,12 +27,10 @@ class NavApp:
         EmployeeForm(tk.Toplevel(self.root))
     
     def timesheet_create_nav(self):
-        emp_select = tk.Toplevel(self.root)
-        EmployeeSelectApp(emp_select, onselect=lambda user: TimesheetCreateApp(tk.Toplevel(emp_select), user))
+        EmployeeSelectApp(tk.Toplevel(self.root))
 
     def timesheet_view_nav(self):
-        emp_select = tk.Toplevel(self.root)
-        EmployeeSelectApp(emp_select, onselect=lambda user: TimesheetViewApp(emp_select, user))
+        EmployeeSelectApp(tk.Toplevel(self.root), for_salary=True)
 
     def timeoff_request_nav(self):
         LeaveApplication(tk.Toplevel(self.root))
