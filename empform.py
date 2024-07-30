@@ -113,7 +113,7 @@ class EmployeeForm:
         employee_type = tk.StringVar()
 
         #base_salary =  tk.Label(self.root, text="Base Salary"), tk.Entry(self.root)
-        min_weekly_hour = tk.Label(self.root, text="Minimum Weekly Hours"), tk.Entry(self.root)
+        min_weekly_hour = tk.Label(self.root, text="Minimum Monthly Hours"), tk.Entry(self.root)
         hourly_wage = tk.Label(self.root, text="Hourly Wage"), tk.Entry(self.root)
 
         def option_selected(_):
@@ -151,19 +151,23 @@ class EmployeeForm:
 
         tk.Button(self.root, 
                 text="Submit", 
-                command=lambda: self.submit_data(fname.get(), lname.get(),  ssid.get(),  dob.get(),  marital_status.get(), gender.get(),  emp_position.get(),  department.get(),  address.get(), phone.get(),  email.get(), employee_type.get(), base_salary[1].get(), min_weekly_hour[1].get(), hourly_wage[1].get())
+                command=lambda: self.submit_data(fname.get(), lname.get(),  ssid.get(),  dob.get(),  marital_status.get(), 
+                                                 gender.get(),  emp_position.get(),  department.get(),  address.get(), phone.get(),  
+                                                 email.get(), edu_prog.get(), edu_level.get(), employee_type.get(), 
+                                                 min_weekly_hour[1].get(), hourly_wage[1].get())
                 ).grid(row=8, column=3)
         
 
        
         self.root.mainloop()
 
-    def submit_data(self, fname, lname, ssid, dob, marital_status, gender, position, department, address, phone, email, employee_type,base_salary,min_weekly_hour,hourly_wage):
+    def submit_data(self, fname, lname, ssid, dob, marital_status, gender, position, department, address, phone, email, 
+                    edu_prog, edu_level, employee_type,min_weekly_hour,hourly_wage):
         
         if fname == '' or lname == '' or ssid == '' or dob == '' or marital_status == '' or \
             gender == '' or position == '' or department == '' or address == '' or phone == '' or \
-            email == '' or employee_type == '' or \
-            (employee_type == 'Full-Time' and base_salary == '' or employee_type == 'Part-Time' and min_weekly_hour + hourly_wage == ''):
+            email == '' or edu_level == '' or edu_prog == '' or employee_type == '' or hourly_wage == '' or \
+            (employee_type == 'Part-Time' and min_weekly_hour == ''):
             return messagebox.showerror('Error!', 'All Fields are required!')
         
         if len(select_query(f'select * from employee where ssid=\'{ssid}\'')) > 0:
@@ -182,35 +186,32 @@ class EmployeeForm:
         gender = find_constant_key('gender', gender)
         position = find_constant_key('emp_position', position)
         department = find_constant_key('department', department)
+        edu_prog = find_constant_key('edu_prog', edu_prog)
+        edu_level = find_constant_key('edu_level', edu_level)
         try:
             datetime.strptime(dob, '%Y-%m-%d')
 
         except:
             return messagebox.showerror('Error!', 'Format of Date of Birth should be YYYY-MM-dd!')
         
-        if employee_type == 'Full-Time':
-            try:
-                base_salary = int(base_salary)
-            except:
-                return messagebox.showerror('Error!', 'Base Salary should be an integer!')
-        else:
+        if employee_type != 'Full-Time':
             try:
                 min_weekly_hour = int(min_weekly_hour)
             except:
                 return messagebox.showerror('Error!', 'Min Weekly Hours should be an integer!')
-            try:
-                hourly_wage = int(hourly_wage)
-            except:
-                return messagebox.showerror('Error!', 'Hourly Wage should be an integer!')
+        try:
+            hourly_wage = int(hourly_wage)
+        except:
+            return messagebox.showerror('Error!', 'Hourly Wage should be an integer!')
         
-        keys_ = 'first_name, last_name, ssid, dob, marital_status, gender, position, department, address, phone_number, email_address, employee_type'
-        values_ = [fname, lname, ssid, f'to_date(\'{dob}\', \'YYYY-MM-DD\')', marital_status, gender, position, department, address, phone, email, employee_type]
+        keys_ = 'first_name, last_name, ssid, dob, marital_status, gender, position, department, address, phone_number, email_address, edu_prog, edu_level, employee_type, salary_per_hour'
+        values_ = [fname, lname, ssid, f'to_date(\'{dob}\', \'YYYY-MM-DD\')', marital_status, gender, position, department, address, phone, email, edu_prog, edu_level, employee_type, hourly_wage]
         if employee_type == 'Full-Time': 
-            keys_ += ', base_salary, daily_start_time, daily_end_time'
-            values_ += [base_salary, 9, 17]
+            keys_ += ', daily_start_time, daily_end_time'
+            values_ += [9, 17]
         else: 
-            keys_ += ', min_hour_per_week, salary_per_hour'
-            values_ += [min_weekly_hour, hourly_wage]
+            keys_ += ', min_hour_per_month'
+            values_ += [min_weekly_hour]
 
         for i in range(len(values_)):
             if isinstance(values_[i], str) and 'to_date' not in values_[i]: 

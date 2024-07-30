@@ -106,7 +106,7 @@ class TimesheetViewApp:
             except:
                 event_time = oevent_time.strftime('%Y-%m-%d %H:%M:%S')
 
-            if deleted == 1:
+            if deleted == '1':
                 query(f'delete from timesheet where id={idx}')
                 continue
             try: 
