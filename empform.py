@@ -1,9 +1,13 @@
+
 from datetime import datetime
 import re
 import tkinter as tk
-from tkinter import ttk
+from tkinter import  ttk
 from tkinter import messagebox
 from typing import Optional
+
+ 
+
 
 import database
 from database import find_constant_key, query, select_query
@@ -12,98 +16,103 @@ class EmployeeForm:
     def __init__(self, root):
         self.root = root
         self.root.title("Employee Form")
+        #self.frame = Frame(root)
         self.create_widget()
 
+
+
     def create_widget(self):
+        #Toplevel.geometry("700x350")
+
         tk.Label(self.root, text="First Name").grid(row=0, column=0)
         fname = tk.Entry(self.root)
         fname.grid(row=0, column=1, sticky='we' , pady=10)
 
-        tk.Label(self.root, text="Last Name").grid(row=1, column=0)
+        tk.Label(self.root, text="Last Name").grid(row=0, column=2)
         lname = tk.Entry(self.root)
-        lname.grid(row=1, column=1, sticky='we', pady=10)
+        lname.grid(row=0, column=3, sticky='we', pady=10)
 
-        tk.Label(self.root, text="SSID").grid(row=2, column=0)
+        tk.Label(self.root, text="SSID").grid(row=1, column=0)
         ssid = tk.Entry(self.root)
-        ssid.grid(row=2, column=1, sticky='we', pady=10)
+        ssid.grid(row=1, column=1, sticky='we', pady=10)
 
-        tk.Label(self.root, text="Date of Birth").grid(row=3, column=0)
+        tk.Label(self.root, text="Date of Birth").grid(row=1, column=2)
         dob = tk.Entry(self.root)
-        dob.grid(row=3, column=1, sticky='we', pady=10)
+        dob.grid(row=1, column=3, sticky='we', pady=10)
 
-        tk.Label(self.root, text="Marital Status").grid(row=4, column=0)
+        tk.Label(self.root, text="Marital Status").grid(row=2, column=0)
         marital_status = tk.StringVar()
         ttk.Combobox(
             self.root,
             state="readonly",
             values=list(database.constants['marital_status'].values()),
             textvariable=marital_status,
-        ).grid(row=4, column=1, sticky='we', pady=10)
+        ).grid(row=2, column=1, sticky='we', pady=10)
 
-        tk.Label(self.root, text="Gender").grid(row=5, column=0)
+        tk.Label(self.root, text="Gender").grid(row=2, column=2)
         gender = tk.StringVar()
         ttk.Combobox(
             self.root,
             state="readonly",
             values=list(database.constants['gender'].values()),
             textvariable=gender,
-        ).grid(row=5, column=1, sticky='we', pady=10)
+        ).grid(row=2, column=3, sticky='we', pady=10)
 
 
-        tk.Label(self.root, text="Position").grid(row=6, column=0)
+        tk.Label(self.root, text="Position").grid(row=3, column=0)
         emp_position = tk.StringVar()
         ttk.Combobox(
             self.root,
             state="readonly",
             values=list(database.constants['emp_position'].values()),
             textvariable=emp_position,
-        ).grid(row=6, column=1, sticky='we', pady=10)
+        ).grid(row=3, column=1, sticky='we', pady=10)
 
-        tk.Label(self.root, text="Department").grid(row=7, column=0)
+        tk.Label(self.root, text="Department").grid(row=3, column=2)
         department = tk.StringVar()
         ttk.Combobox(
             self.root,
             state="readonly",
             values=list(database.constants['department'].values()),
             textvariable=department
-        ).grid(row=7, column=1, sticky='we', pady=10)
+        ).grid(row=3, column=3, sticky='we', pady=10)
         
 
-        tk.Label(self.root, text="Edu Prog").grid(row=8, column=0)
+        tk.Label(self.root, text="Edu Prog").grid(row=4, column=0)
         edu_prog = tk.StringVar()
         ttk.Combobox(
             self.root,
             state="readonly",
             values=list(database.constants['edu_prog'].values()),
             textvariable=edu_prog,
-        ).grid(row=8, column=1, sticky='we', pady=10)
+        ).grid(row=4, column=1, sticky='we', pady=10)
 
 
-        tk.Label(self.root, text="Edu Level").grid(row=9, column=0)
+        tk.Label(self.root, text="Edu Level").grid(row=4, column=2)
         edu_level = tk.StringVar()
         ttk.Combobox(
             self.root,
             state="readonly",
             values=list(database.constants['edu_level'].values()),
             textvariable=edu_level,
-        ).grid(row=9, column=1, sticky='we', pady=10)
+        ).grid(row=4, column=3, sticky='we', pady=10)
 
-        tk.Label(self.root, text="Address").grid(row=10, column=0)
+        tk.Label(self.root, text="Address").grid(row=5, column=0)
         address = tk.Entry(self.root)
-        address.grid(row=10, column=1, sticky='we', pady=10)
+        address.grid(row=5, column=1, sticky='we', pady=10)
 
-        tk.Label(self.root, text="Phone Number").grid(row=11, column=0)
+        tk.Label(self.root, text="Phone Number").grid(row=5, column=2)
         phone = tk.Entry(self.root)
-        phone.grid(row=11, column=1, sticky='we', pady=10)
+        phone.grid(row=5, column=3, sticky='we', pady=10)
 
-        tk.Label(self.root, text="Email Address").grid(row=12, column=0)
+        tk.Label(self.root, text="Email Address").grid(row=6, column=0)
         email = tk.Entry(self.root)
-        email.grid(row=12, column=1, sticky='we', pady=10)
+        email.grid(row=6, column=1, sticky='we', pady=10)
 
-        tk.Label(self.root, text="Employee Contract").grid(row=13, column=0)
+        tk.Label(self.root, text="Employee Contract").grid(row=6, column=2)
         employee_type = tk.StringVar()
 
-        base_salary =  tk.Label(self.root, text="Base Salary"), tk.Entry(self.root)
+        #base_salary =  tk.Label(self.root, text="Base Salary"), tk.Entry(self.root)
         min_weekly_hour = tk.Label(self.root, text="Minimum Weekly Hours"), tk.Entry(self.root)
         hourly_wage = tk.Label(self.root, text="Hourly Wage"), tk.Entry(self.root)
 
@@ -111,20 +120,24 @@ class EmployeeForm:
             if employee_type.get() == 'Full-Time':
                 min_weekly_hour[0].grid_forget()
                 min_weekly_hour[1].grid_forget()
-                hourly_wage[0].grid_forget()
-                hourly_wage[1].grid_forget()
+                #hourly_wage[0].grid_forget()
+               # hourly_wage[1].grid_forget()
 
-                base_salary[0].grid(row=14, column=0)
-                base_salary[1].grid(row=14, column=1, sticky='we', pady=10)
+
+                hourly_wage[0].grid(row=7, column=0)
+                hourly_wage[1].grid(row=7, column=1, sticky='we', pady=10)
+
+               # base_salary[0].grid(row=7, column=0)
+               # base_salary[1].grid(row=7, column=1, sticky='we', pady=10)
             else:
-                base_salary[0].grid_forget()
-                base_salary[1].grid_forget()
+                # base_salary[0].grid_forget()
+               # base_salary[1].grid_forget()
 
-                min_weekly_hour[0].grid(row=14, column=0)
-                min_weekly_hour[1].grid(row=14, column=1, sticky='we', pady=10)
+                min_weekly_hour[0].grid(row=7, column=2)
+                min_weekly_hour[1].grid(row=7, column=3, sticky='we', pady=10)
 
-                hourly_wage[0].grid(row=15, column=0)
-                hourly_wage[1].grid(row=15, column=1, sticky='we', pady=10)
+                hourly_wage[0].grid(row=7, column=0)
+                hourly_wage[1].grid(row=7, column=1, sticky='we', pady=10)
 
 
         cbox = ttk.Combobox(
@@ -133,14 +146,16 @@ class EmployeeForm:
             values= ['Full-Time' , 'Part-Time'],
             textvariable=employee_type,
         )
-        cbox.grid(row=13, column=1, sticky='we', pady=10)
+        cbox.grid(row=6, column=3, sticky='we', pady=10)
         cbox.bind("<<ComboboxSelected>>", option_selected)
 
         tk.Button(self.root, 
                 text="Submit", 
                 command=lambda: self.submit_data(fname.get(), lname.get(),  ssid.get(),  dob.get(),  marital_status.get(), gender.get(),  emp_position.get(),  department.get(),  address.get(), phone.get(),  email.get(), employee_type.get(), base_salary[1].get(), min_weekly_hour[1].get(), hourly_wage[1].get())
-                ).grid(row=17, column=1)
+                ).grid(row=8, column=3)
+        
 
+       
         self.root.mainloop()
 
     def submit_data(self, fname, lname, ssid, dob, marital_status, gender, position, department, address, phone, email, employee_type,base_salary,min_weekly_hour,hourly_wage):
@@ -169,6 +184,7 @@ class EmployeeForm:
         department = find_constant_key('department', department)
         try:
             datetime.strptime(dob, '%Y-%m-%d')
+
         except:
             return messagebox.showerror('Error!', 'Format of Date of Birth should be YYYY-MM-dd!')
         
